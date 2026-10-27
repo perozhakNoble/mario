@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<!-- DOCTYPE каже браузеру: «це сучасний HTML5». Без нього браузер вмикає старий «режим сумісності». -->
+
+<!-- lang="uk" — мова сторінки. Допомагає програмам для читання з екрана, перекладачу та пошуковикам. -->
+<html lang="uk">
+<head>
+  <!-- charset UTF-8 — щоб українські літери та емодзі показувались правильно -->
+  <meta charset="UTF-8">
+  <!-- viewport — без цього рядка на телефоні сайт буде дрібним, як на комп'ютері -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- title — текст на вкладці браузера -->
+  <title>Світ Супер Маріо 🍄</title>
+
+  <!-- Підключаємо шрифти з Google Fonts:
+       Press Start 2P — піксельний шрифт, як у старих іграх,
+       Nunito — м'який і зручний для читання тексту. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <!-- Наш власний файл зі стилями -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- Прихований чекбокс для нічного режиму.
+       Його «натискає» кнопка-label у шапці (бо в неї for="night").
+       А CSS бачить, чи він увімкнений, через селектор :has() — і все це БЕЗ JavaScript! -->
+  <input type="checkbox" id="night" class="night-toggle">
+
+  <!-- Небо з хмарками та зірками на фоні.
+       aria-hidden="true" — це лише декорація, програмам для незрячих її читати не треба. -->
+  <div class="sky" aria-hidden="true">
+    <div class="cloud cloud--1"></div>
+    <div class="cloud cloud--2"></div>
+    <div class="cloud cloud--3"></div>
+  </div>
+
+  <!-- ======== ШАПКА ========
+       Вона «липка»: під час прокрутки залишається вгорі (див. position: sticky у CSS). -->
+  <header class="site-header">
+    <a href="#top" class="logo">🍄 Маріо</a>
+
+    <!-- <nav> — це саме МЕНЮ навігації, тобто посилання по сайту.
+         Посилання з # ведуть до елемента з таким id на цій же сторінці. -->
+    <nav aria-label="Головне меню">
+      <ul>
+        <li><a href="#who">Хто він</a></li>
+        <li><a href="#why">Чому популярні</a></li>
+        <li><a href="#games">Ігри</a></li>
+        <li><a href="#facts">Факти</a></li>
+        <li><a href="#play">Грати</a></li>
+      </ul>
+    </nav>
+
+    <!-- label for="night" — клік по ньому вмикає/вимикає чекбокс з id="night" -->
+    <label for="night" class="night-label" title="Нічний режим">
+      <span class="visually-hidden">Увімкнути нічний режим</span>
+    </label>
+  </header>
+
+  <!-- ======== ГОЛОВНИЙ ВМІСТ ======== -->
+  <main>
+
+    <!-- Перший екран (hero) -->
+    <section class="hero" id="top">
+      <!-- Блоки зі знаком питання — наведи на них мишку! -->
+      <div class="blocks" aria-hidden="true">
+        <span class="q-block">?</span>
+        <span class="brick"></span>
+        <span class="q-block">?</span>
+        <span class="brick"></span>
+        <span class="q-block">?</span>
+      </div>
+
+      <h1>
+        🍄 Світ Супер Маріо
+        <!-- span — «нейтральна» обгортка, щоб окремо стилізувати частину тексту -->
+        <span class="subtitle">Легенда гри, яка змінила все</span>
+      </h1>
+
+      <p class="lead">
+        Ласкаво просимо до незабутнього всесвіту Super Mario! Уже понад чотири десятиліття веселий
+        вусатий водопровідник у червоній кашкетці залишається головним символом світу відеоігор,
+        даруючи радість і захоплення мільйонам гравців будь-якого віку.
+      </p>
+    </section>
+
+    <!-- <section> — смисловий розділ сторінки. Кожен має свій заголовок h2. -->
+    <section id="who" class="card">
+      <h2>🌟 Хто такий Маріо?</h2>
+
+      <div class="who-grid">
+        <p>
+          Маріо — це не просто персонаж, це справжня ікона поп-культури! Уперше з'явившись
+          у <mark>1981 році</mark> в грі <strong>Donkey Kong</strong> (під ім'ям Jumpman), він швидко
+          став головним героєм власних пригод у Грибному Королівстві (Mushroom Kingdom).
+          Він завжди готовий вирушити в небезпечну подорож, щоб урятувати принцесу Піч
+          від зловісного короля черепах — Боузера.
+        </p>
+
+        <!-- <figure> + <figcaption> — картинка з підписом.
+             alt — опис картинки: його бачать, якщо фото не завантажилось,
+             і його читають незрячим людям. Завжди пиши alt!
+             src може бути назвою файлу поруч (наприклад "маріо.jpg")
+             або повним посиланням на картинку в інтернеті, як тут. -->
+        <figure>
+          <img src="https://upload.wikimedia.org/wikipedia/en/5/5c/Mario_by_Shigehisa_Nakaue.png" alt="Маріо в червоній кашкетці та синьому комбінезоні">
+          <figcaption>Той самий вусань 👨‍🔧</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="why" class="card">
+      <h2>🏆 Чому ігри про Маріо такі популярні?</h2>
+
+      <!-- Маркований список <ul>, але в CSS ми перетворимо його на сітку карток -->
+      <ul class="features">
+        <li>
+          <span class="icon" aria-hidden="true">🎮</span>
+          <h3>Досконалий геймплей</h3>
+          <p>Ігри серії розроблені так, щоб бути інтуїтивно зрозумілими для новачків, але водночас цікавими й складними для досвідчених гравців.</p>
+        </li>
+        <li>
+          <span class="icon" aria-hidden="true">🌈</span>
+          <h3>Яскравий та живий світ</h3>
+          <p>Від зелених пагорбів із барвистими блоками й золотими монетами до підземних печер та підводних рівнів.</p>
+        </li>
+        <li>
+          <span class="icon" aria-hidden="true">🎵</span>
+          <h3>Легендарна музика</h3>
+          <p>Мелодія з Super Mario Bros. впізнавана в усьому світі з перших кількох нот!</p>
+        </li>
+        <li>
+          <span class="icon" aria-hidden="true">🤝</span>
+          <h3>Розвага для всієї родини</h3>
+          <p>Завдяки розмаїттю жанрів у Маріо цікаво грати як сольно, так і в колі друзів або родини.</p>
+        </li>
+      </ul>
+    </section>
+
+    <section id="games" class="card">
+      <h2>🕹️ Культові ігри та відгалуження серії</h2>
+      <p>Усесвіт Маріо давно вийшов за межі класичних 2D-платформерів:</p>
+
+      <!-- Нумерований список <ol>. Номери «1-1», «1-2»… малює CSS-лічильник (counter) -->
+      <ol class="levels">
+        <li><strong>Класичні платформери:</strong> Super Mario Bros., Super Mario World, Super Mario Odyssey.</li>
+        <li><strong>Перегони (Mario Kart):</strong> шалені динамічні забіги на картах із пастками, бонусами та розвагами для компаній.</li>
+        <li><strong>Спорт та вечірки (Mario Party / Mario Tennis):</strong> серії ігор, що перетворюють будь-яку зустріч із друзями на яскраве свято.</li>
+        <!-- <abbr> — скорочення. Наведи мишку — побачиш підказку з title -->
+        <li><strong><abbr title="Рольова гра (Role-Playing Game)">РПГ</abbr> та пригоди:</strong> Paper Mario та Mario &amp; Luigi, що розкривають глибокі історії та гумор усесвіту.</li>
+      </ol>
+    </section>
+
+    <section id="facts" class="card">
+      <h2>🤓 Цікаві факти</h2>
+
+      <!-- <details> + <summary> — розкривний блок. Клікни на питання — відкриється відповідь.
+           Це працює саме по собі, вбудовано в HTML, без жодного JavaScript! -->
+      <details>
+        <summary>Ким Маріо був спочатку?</summary>
+        <p>У Donkey Kong (1981) Маріо був теслею. Водопровідником він став лише в Mario Bros. (1983) — там же вперше з'явився його брат Луїджі.</p>
+      </details>
+      <details>
+        <summary>Чому в Маріо вуса і кашкет?</summary>
+        <p>Екрани тоді мали дуже мало пікселів. Рот намалювати було складно — тож з'явилися вуса. А кашкет урятував від малювання зачіски!</p>
+      </details>
+      <details>
+        <summary>Звідки ім'я «Маріо»?</summary>
+        <p>За легендою, персонажа назвали на честь Маріо Сегалі — власника складу, який орендував американський офіс Nintendo.</p>
+      </details>
+      <details>
+        <summary>Хто придумав Маріо?</summary>
+        <p>Японський геймдизайнер Сігеру Міямото. Він також створив серію The Legend of Zelda.</p>
+      </details>
+    </section>
+
+    <section id="play" class="card play">
+      <h2>🚀 Приєднуйтесь до пригоди!</h2>
+      <p>Незалежно від того, чи ви вперше знайомитеся з Грибним Королівством, чи зростали на іграх Nintendo, світ Маріо завжди відкритий для нових відкриттів.</p>
+
+      <!-- target="_blank" — відкрити в новій вкладці.
+           rel="noopener" — правило безпеки для таких посилань. -->
+      <a class="pipe-button" href="https://supermario-game.com/ru/fullscreen" target="_blank" rel="noopener">
+        ▶ Грати в Маріо
+      </a>
+
+      <p>Обирайте свій улюблений рівень, збирайте монети та вирушайте назустріч новим пригодам!</p>
+
+      <!-- Обгортка .video тримає пропорції 16:9 на будь-якому екрані (див. aspect-ratio у CSS).
+           loading="lazy" — відео завантажиться лише тоді, коли до нього докрутять.
+
+           ⚠️ Вбудоване відео YouTube НЕ грає, якщо відкрити .html просто як файл
+           (адреса в браузері починається з file://) — YouTube тоді показує помилку.
+           На справжньому сайті все працює: наприклад, GitHub Pages
+           або розширення «Live Server» у VS Code (адреса http://127.0.0.1:5500/...). -->
+      <div class="video">
+        <iframe
+          src="https://www.youtube.com/embed/c_b9Yn34pdI?si=xsOBO7TC3NZVkgBx"
+          title="Відео про Super Mario"
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen></iframe>
+      </div>
+
+      <!-- Запасний варіант: звичайне посилання на відео працює завжди -->
+      <a class="video-link" href="https://www.youtube.com/watch?v=c_b9Yn34pdI" target="_blank" rel="noopener">
+        Відео не грає? Дивись на YouTube ↗
+      </a>
+    </section>
+
+  </main>
+
+  <!-- ======== ПІДВАЛ ========
+       Стилізований під цегляну землю з травою, а по траві ходить грибочок 🍄 -->
+  <footer class="ground">
+    <span class="walker" aria-hidden="true">🍄</span>
+    <p>&copy; 2026 Мій сайт · Зроблено на HTML і CSS з ❤️</p>
+  </footer>
+</body>
+</html>

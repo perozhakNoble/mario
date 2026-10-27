@@ -1,0 +1,844 @@
+/* =========================================================
+   🍄 СТИЛІ ДЛЯ САЙТУ ПРО МАРІО
+   Кожен блок підписаний: що це за прийом і навіщо він.
+   Спробуй змінювати значення й дивитись, що станеться!
+   ========================================================= */
+
+
+/* ---------- 1. ЗМІННІ (custom properties) ----------
+   Кольори та шрифти записуємо ОДИН раз тут,
+   а далі всюди пишемо var(--назва).
+   Хочеш змінити червоний на всьому сайті — міняєш один рядок! */
+:root {
+  --red: #e52521;
+  --yellow: #fbd000;
+  --gold-dark: #c79400;
+  --green: #43b047;
+  --green-dark: #2b7a2e;
+  --blue: #049cd8;
+  --brown: #c84c0c;
+  --ink: #1d1d1d;
+
+  --sky-top: #5c94fc;      /* те саме небо, що в Super Mario Bros. */
+  --sky-bottom: #a6d5ff;
+  --card-bg: rgba(255, 255, 255, 0.88);
+  --text: #1d1d1d;
+  --heading: var(--red);
+
+  --pixel-font: "Press Start 2P", monospace;
+  --body-font: "Nunito", sans-serif;
+}
+
+
+/* ---------- 2. НІЧНИЙ РЕЖИМ БЕЗ JAVASCRIPT ----------
+   :has() — «батьківський селектор». Читається так:
+   «body, у якого всередині є (has) увімкнений (:checked) чекбокс #night».
+   Ми просто перевизначаємо змінні — і весь сайт змінює кольори сам. */
+body:has(#night:checked) {
+  --sky-top: #0b1033;
+  --sky-bottom: #2e2a6b;
+  --card-bg: rgba(22, 26, 64, 0.88);
+  --text: #f1f1f1;
+  --heading: var(--yellow);
+}
+
+
+/* ---------- 3. БАЗОВІ НАЛАШТУВАННЯ ---------- */
+
+/* * — «всі елементи». border-box: ширина рахується разом із padding і border.
+   Так набагато простіше рахувати розміри. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Плавна прокрутка, коли клікаєш на посилання з # у меню */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--body-font);
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--text);
+  /* Градієнт: зверху одне небо, донизу — світліше.
+     fixed — фон стоїть на місці, коли гортаєш сторінку. */
+  background: linear-gradient(var(--sky-top), var(--sky-bottom)) fixed;
+  min-height: 100vh;
+  transition: color 0.4s;
+}
+
+/* Колір виділення тексту мишкою — виділи будь-який текст! */
+::selection {
+  background: var(--yellow);
+  color: var(--ink);
+}
+
+/* Картинки ніколи не вилізуть за межі свого блока */
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Видно лише для програм читання з екрана, але не на сторінці */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Ховаємо чекбокс нічного режиму (ним керує кнопка-label) */
+.night-toggle {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* :focus-visible — рамка, коли ходиш по сайту клавішею Tab.
+   Важливо для тих, хто не користується мишкою. */
+a:focus-visible,
+summary:focus-visible {
+  outline: 3px dashed var(--yellow);
+  outline-offset: 3px;
+}
+
+
+/* ---------- 4. НЕБО: ХМАРКИ ТА ЗІРКИ ----------
+   position: fixed — шар «приклеєний» до вікна.
+   inset: 0 — те саме, що top: 0; right: 0; bottom: 0; left: 0.
+   z-index: -1 — шар лежить ПІД усім вмістом. */
+.sky {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Хмарка = овал + два кола з псевдоелементів ::before та ::after.
+   Псевдоелементи — це «невидимі» додаткові елементи, які створює CSS. */
+.cloud {
+  position: absolute;
+  left: 0;
+  width: 140px;
+  height: 44px;
+  background: white;
+  border-radius: 44px;
+  animation: drift 50s linear infinite;
+  transition: opacity 1s;
+}
+
+.cloud::before,
+.cloud::after {
+  content: "";            /* без content псевдоелемент не з'явиться! */
+  position: absolute;
+  background: white;
+  border-radius: 50%;     /* 50% = ідеальне коло */
+}
+
+.cloud::before { width: 56px; height: 56px; top: -28px; left: 18px; }
+.cloud::after  { width: 76px; height: 76px; top: -40px; right: 18px; }
+
+/* Кожна хмарка трохи інша: висота, розмір, швидкість.
+   Від'ємна затримка (delay) — анімація стартує «з середини», тож хмарки не йдуть строєм. */
+.cloud--1 { top: 18%; }
+.cloud--2 { top: 45%; scale: 0.7; animation-duration: 70s; animation-delay: -30s; }
+.cloud--3 { top: 75%; scale: 1.3; animation-duration: 60s; animation-delay: -45s; }
+
+/* @keyframes — опис анімації: «звідки» (from) і «куди» (to) */
+@keyframes drift {
+  from { transform: translateX(-250px); }
+  to   { transform: translateX(100vw); }   /* 100vw = вся ширина вікна */
+}
+
+/* Зірки: кожен radial-gradient малює одну крапку. Через кому — багато крапок!
+   Удень вони прозорі (opacity: 0). */
+.sky::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 8% 12%, white, transparent),
+    radial-gradient(3px 3px at 22% 38%, white, transparent),
+    radial-gradient(2px 2px at 35% 8%, white, transparent),
+    radial-gradient(2px 2px at 48% 55%, white, transparent),
+    radial-gradient(3px 3px at 62% 22%, white, transparent),
+    radial-gradient(2px 2px at 75% 68%, white, transparent),
+    radial-gradient(2px 2px at 88% 15%, white, transparent),
+    radial-gradient(3px 3px at 93% 45%, white, transparent),
+    radial-gradient(2px 2px at 15% 80%, white, transparent),
+    radial-gradient(2px 2px at 55% 88%, white, transparent);
+  opacity: 0;
+  transition: opacity 1s;
+}
+
+/* Уночі: зірки мерехтять, хмарки ледь видно */
+body:has(#night:checked) .sky::before {
+  opacity: 1;
+  animation: twinkle 2s ease-in-out infinite alternate;
+}
+body:has(#night:checked) .cloud {
+  opacity: 0.15;
+}
+
+@keyframes twinkle {
+  from { opacity: 0.5; }
+  to   { opacity: 1; }
+}
+
+
+/* ---------- 5. ШАПКА ----------
+   position: sticky — шапка гортається разом зі сторінкою,
+   доки не дійде до top: 0, а там «прилипає». */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  /* Flexbox — розкладає елементи в рядок.
+     justify-content: space-between — логотип ліворуч, кнопка праворуч, меню між ними. */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--red);
+  border-bottom: 4px solid var(--ink);
+}
+
+.logo {
+  font-family: var(--pixel-font);
+  font-size: 0.9rem;
+  color: white;
+  text-decoration: none;
+  white-space: nowrap;
+  text-shadow: 2px 2px 0 var(--ink);
+}
+
+.site-header nav ul {
+  display: flex;
+  gap: 0.25rem;
+  list-style: none;   /* прибираємо крапочки списку */
+  margin: 0;
+  padding: 0;
+}
+
+.site-header nav a {
+  display: block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;   /* велике число = «пігулка» */
+  color: white;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  /* transition — зміни відбуваються плавно, а не стрибком */
+  transition: background-color 0.2s, transform 0.2s;
+}
+
+/* :hover — стан, коли на елемент наведено мишку */
+.site-header nav a:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Кнопка нічного режиму */
+.night-label {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  /* display: grid + place-items: center — найпростіший спосіб
+     поставити щось точно по центру! */
+  display: grid;
+  place-items: center;
+  font-size: 1.3rem;
+  background: #0b1033;    /* удень — нічне небо з місяцем */
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.3s, background-color 0.3s;
+}
+
+/* уночі — денне небо з сонцем */
+body:has(#night:checked) .night-label {
+  background: var(--blue);
+}
+
+.night-label:hover {
+  transform: rotate(20deg) scale(1.1);
+}
+
+/* Іконку малює CSS через content — і міняє її, коли чекбокс увімкнений */
+.night-label::before {
+  content: "🌙";
+}
+body:has(#night:checked) .night-label::before {
+  content: "☀️";
+}
+/* Рамка на кнопці, коли до чекбокса дійшли клавішею Tab */
+body:has(#night:focus-visible) .night-label {
+  outline: 3px dashed var(--yellow);
+  outline-offset: 3px;
+}
+
+
+/* ---------- 6. ГОЛОВНИЙ ВМІСТ ----------
+   max-width + margin: 0 auto — класичний спосіб поставити блок по центру
+   і не дати тексту розтягнутись на весь широкий монітор. */
+main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1rem 5rem;
+  display: grid;
+  gap: 2.5rem;
+}
+
+/* Коли переходимо за якорем #..., заголовок не сховається під липкою шапкою */
+section {
+  scroll-margin-top: 90px;
+}
+
+/* Картка в «піксельному» стилі: товста рамка + тінь без розмиття.
+   box-shadow: зсув-X зсув-Y розмиття колір. Розмиття 0 = чітка тінь. */
+.card {
+  padding: clamp(1.25rem, 4vw, 2.5rem);
+  background: var(--card-bg);
+  border: 4px solid var(--ink);
+  border-radius: 12px;
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.25);
+  /* Розмиває все, що ПІД карткою (хмарки) — ефект матового скла */
+  backdrop-filter: blur(6px);
+  transition: background-color 0.4s;
+}
+
+
+/* ---------- 7. ЗАГОЛОВКИ ----------
+   clamp(мінімум, бажане, максимум) — розмір шрифту сам підлаштовується
+   під ширину екрана. vw — відсоток від ширини вікна. */
+h1,
+h2 {
+  font-family: var(--pixel-font);
+  text-align: center;
+  line-height: 1.5;
+}
+
+h1 {
+  margin: 0 0 1.5rem;
+  font-size: clamp(1.3rem, 4.5vw, 2.6rem);
+  font-weight: 400;
+  color: var(--yellow);
+  /* Кілька тіней через кому: 4 чорні навколо = контур, червона = «3D» */
+  text-shadow:
+    3px 3px 0 var(--ink),
+    -3px -3px 0 var(--ink),
+    3px -3px 0 var(--ink),
+    -3px 3px 0 var(--ink),
+    7px 7px 0 var(--red);
+}
+
+.subtitle {
+  display: block;     /* span стає на окремий рядок */
+  margin-top: 1rem;
+  font-size: 0.45em;  /* em — відносно розміру батька (h1) */
+  color: white;
+  text-shadow: 2px 2px 0 var(--ink);
+}
+
+h2 {
+  margin: 0 0 1.5rem;
+  font-size: clamp(0.95rem, 2.8vw, 1.35rem);
+  font-weight: 400;
+  color: var(--heading);
+}
+
+h3 {
+  margin: 0.5rem 0;
+  font-size: 1.15rem;
+  font-weight: 900;
+}
+
+/* <mark> — підсвічений текст */
+mark {
+  background: var(--yellow);
+  color: var(--ink);
+  padding: 0 0.25em;
+  border-radius: 4px;
+}
+
+/* <abbr> з підказкою: підкреслення пунктиром + курсор-питання */
+abbr[title] {
+  text-decoration: underline dotted;
+  cursor: help;
+}
+
+
+/* ---------- 8. ПЕРШИЙ ЕКРАН ---------- */
+.hero {
+  text-align: center;
+  padding-top: 2rem;
+}
+
+.lead {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: white;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
+}
+
+.blocks {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2.5rem;
+}
+
+.q-block,
+.brick {
+  width: 56px;
+  height: 56px;
+  border: 3px solid var(--ink);
+}
+
+/* Блок «?»: inset-тіні (тіні ВСЕРЕДИНІ) роблять його об'ємним */
+.q-block {
+  position: relative;   /* щоб монетка ::after позиціонувалась відносно блока */
+  display: grid;
+  place-items: center;
+  font-family: var(--pixel-font);
+  font-size: 1.4rem;
+  color: var(--brown);
+  background: var(--yellow);
+  box-shadow:
+    inset -5px -5px 0 var(--gold-dark),
+    inset 5px 5px 0 #fff3a0;
+  cursor: pointer;
+}
+
+/* Наведи мишку — блок підстрибне… */
+.q-block:hover {
+  animation: bump 0.35s ease-out;
+}
+
+/* …і з нього вилетить монетка! Вона — псевдоелемент ::after */
+.q-block::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 22px;
+  height: 30px;
+  margin-left: -11px;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  /* radial-gradient: світла пляма в центрі, темніше до країв */
+  background: radial-gradient(circle at 40% 35%, #fff6a8, var(--yellow) 45%, var(--gold-dark));
+  opacity: 0;
+  pointer-events: none;
+}
+
+.q-block:hover::after {
+  animation: coin-pop 0.7s ease-out;
+}
+
+/* Цеглинка: дві лінійні «смужки» = сітка швів */
+.brick {
+  background-color: var(--brown);
+  background-image:
+    linear-gradient(var(--ink) 3px, transparent 3px),
+    linear-gradient(90deg, var(--ink) 3px, transparent 3px);
+  background-size: 25px 25px;
+}
+
+/* Відсотки в @keyframes — проміжні кадри анімації */
+@keyframes bump {
+  50% { transform: translateY(-18px); }
+}
+
+@keyframes coin-pop {
+  0%   { opacity: 1; transform: translateY(0) rotateY(0); }
+  100% { opacity: 0; transform: translateY(-90px) rotateY(720deg); }
+}
+
+
+/* ---------- 9. «ХТО ТАКИЙ МАРІО» ----------
+   CSS Grid — сітка. «1.4fr 1fr» означає: дві колонки,
+   ліва трохи ширша за праву (fr = частка вільного місця). */
+.who-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+.who-grid p {
+  margin: 0;
+}
+
+/* Фото як «полароїд»: біла рамка, трохи нахилене */
+figure {
+  margin: 0;
+  padding: 12px 12px 8px;
+  background: white;
+  border: 3px solid var(--ink);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.25);
+  transform: rotate(-3deg);
+  transition: transform 0.3s;
+}
+
+figure:hover {
+  transform: rotate(0deg) scale(1.05);
+}
+
+figure img {
+  width: 100%;
+  aspect-ratio: 1;       /* завжди квадрат */
+  object-fit: contain;   /* картинка вміщується цілком і не сплющується
+                            (cover — заповнила б квадрат, обрізавши краї) */
+  padding: 8px;
+  /* У картинки прозорий фон, тож крізь неї видно наше «небо» */
+  background: linear-gradient(var(--sky-top), var(--sky-bottom));
+}
+
+figcaption {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+
+/* ---------- 10. КАРТКИ «ЧОМУ ПОПУЛЯРНІ» ----------
+   repeat(auto-fit, minmax(280px, 1fr)) — магія Grid:
+   «стільки колонок, скільки влізе, але кожна не вужча за 280px».
+   На телефоні буде 1 колонка, на ноутбуці — 2. Без жодних @media!
+   min(100%, 280px) — щоб на дуже вузькому екрані картка не вилізла за край. */
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 1.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.features li {
+  padding: 1.25rem;
+  background: white;
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  border-top-width: 10px;
+  border-radius: 10px;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+
+/* :nth-child(n) — «n-ний за рахунком». Кожна картка свого кольору */
+.features li:nth-child(1) { border-top-color: var(--red); }
+.features li:nth-child(2) { border-top-color: var(--green); }
+.features li:nth-child(3) { border-top-color: var(--blue); }
+.features li:nth-child(4) { border-top-color: var(--yellow); }
+
+.features li:hover {
+  transform: translateY(-8px) rotate(-1deg);
+  box-shadow: 0 12px 0 rgba(0, 0, 0, 0.2);
+}
+
+.features p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.icon {
+  display: inline-block;
+  font-size: 2.5rem;
+}
+
+/* Наводимо на картку — іконка в ній ворушиться.
+   Селектор «li:hover .icon» = «.icon всередині li, на який навели мишку» */
+.features li:hover .icon {
+  animation: wiggle 0.5s ease-in-out;
+}
+
+@keyframes wiggle {
+  25% { transform: rotate(-15deg) scale(1.2); }
+  75% { transform: rotate(15deg) scale(1.2); }
+}
+
+
+/* ---------- 11. СПИСОК ІГОР ЯК РІВНІ «1-1», «1-2»… ----------
+   CSS-лічильник (counter): counter-reset створює його,
+   counter-increment збільшує на 1 для кожного li,
+   counter(level) — виводить поточне число. */
+.levels {
+  counter-reset: level;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+/* position: relative на li + position: absolute на ::before =
+   значок «прибитий» до лівого краю пункту, а текст обтікає з відступом */
+.levels li {
+  counter-increment: level;
+  position: relative;
+  min-height: 42px;
+  padding-left: 84px;
+}
+
+.levels li::before {
+  content: "1-" counter(level);   /* текст можна склеювати! */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 64px;
+  padding: 0.6rem 0.5rem;
+  text-align: center;
+  font-family: var(--pixel-font);
+  font-size: 0.8rem;
+  color: white;
+  background: var(--ink);
+  border-radius: 6px;
+  box-shadow: 3px 3px 0 var(--red);
+}
+
+
+/* ---------- 12. РОЗКРИВНІ ФАКТИ (details / summary) ---------- */
+details {
+  margin-bottom: 0.75rem;
+  background: white;
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1.2rem;
+  font-weight: 900;
+  cursor: pointer;
+  list-style: none;     /* прибираємо стандартний трикутник */
+  transition: background-color 0.2s;
+}
+
+summary::-webkit-details-marker {
+  display: none;        /* те саме для Safari */
+}
+
+summary:hover {
+  background: #fff6c2;
+}
+
+/* Свій значок «+» */
+summary::after {
+  content: "+";
+  font-family: var(--pixel-font);
+  color: var(--red);
+}
+
+/* [open] — селектор атрибута: «details, у якого є атрибут open».
+   Браузер сам додає open, коли блок розкритий. */
+details[open] summary {
+  background: var(--yellow);
+}
+
+details[open] summary::after {
+  content: "−";
+}
+
+details p {
+  margin: 0;
+  padding: 1rem 1.2rem;
+  animation: fade-in 0.4s ease-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ---------- 13. КНОПКА-ТРУБА ТА ВІДЕО ---------- */
+.play {
+  text-align: center;
+}
+
+/* Посилання, стилізоване під зелену трубу.
+   Градієнт зліва направо з світлою смугою = «блиск» на трубі. */
+.pipe-button {
+  display: inline-block;
+  margin: 0.5rem 0 1rem;
+  padding: 1.1rem 2rem;
+  font-family: var(--pixel-font);
+  font-size: 0.95rem;
+  color: white;
+  text-decoration: none;
+  text-shadow: 2px 2px 0 var(--ink);
+  background: linear-gradient(90deg,
+    var(--green-dark),
+    var(--green) 30%,
+    #8be88b 45%,
+    var(--green) 60%,
+    var(--green-dark));
+  border: 4px solid var(--ink);
+  border-radius: 8px;
+  box-shadow: 0 6px 0 var(--ink);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.pipe-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 9px 0 var(--ink);
+}
+
+/* :active — поки кнопку тиснуть. Тінь зникає = кнопка «втиснулась» */
+.pipe-button:active {
+  transform: translateY(6px);
+  box-shadow: 0 0 0 var(--ink);
+}
+
+/* aspect-ratio: 16 / 9 — блок завжди має пропорції відео,
+   хоч на телефоні, хоч на великому екрані */
+.video {
+  margin-top: 1.5rem;
+  aspect-ratio: 16 / 9;
+  border: 4px solid var(--ink);
+  border-radius: 12px;
+  overflow: hidden;      /* обрізаємо кути відео по border-radius */
+  background: var(--ink);
+}
+
+.video iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Маленьке запасне посилання під відео */
+.video-link {
+  display: inline-block;
+  margin-top: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  /* text-decoration можна налаштувати: колір, товщину, відступ від тексту */
+  text-decoration: underline wavy var(--red) 2px;
+  text-underline-offset: 5px;
+  transition: color 0.2s;
+}
+
+.video-link:hover {
+  color: var(--red);
+}
+
+
+/* ---------- 14. ПІДВАЛ: ЗЕМЛЯ З ЦЕГЛИ ---------- */
+.ground {
+  position: relative;
+  padding: 2.5rem 1rem 2rem;
+  text-align: center;
+  font-family: var(--pixel-font);
+  font-size: 0.7rem;
+  color: white;
+  text-shadow: 2px 2px 0 var(--ink);
+  border-top: 14px solid var(--green);   /* трава */
+  background-color: var(--brown);
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.35) 3px, transparent 3px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.35) 3px, transparent 3px);
+  background-size: 48px 24px;
+}
+
+.ground p {
+  margin: 0;
+  line-height: 2;
+}
+
+/* Грибочок гуляє по траві туди-сюди.
+   Дві анімації через кому: одна рухає вбік (left), друга підстрибує (transform). */
+.walker {
+  position: absolute;
+  top: -50px;
+  left: 0;
+  font-size: 2rem;
+  text-shadow: none;
+  animation:
+    walk 14s linear infinite alternate,
+    hop 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes walk {
+  from { left: 2%; }
+  to   { left: calc(98% - 2rem); }   /* calc() — обчислення прямо в CSS */
+}
+
+@keyframes hop {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-6px); }
+}
+
+
+/* ---------- 15. АДАПТИВНІСТЬ (@media) ----------
+   Правила всередині спрацюють, лише якщо вікно вужче за 700px (телефон). */
+@media (max-width: 700px) {
+  body {
+    font-size: 16px;
+  }
+
+  .site-header {
+    flex-wrap: wrap;      /* дозволяємо перенос на новий рядок */
+    padding: 0.6rem 1rem;
+  }
+
+  /* order: 3 — меню переїжджає в кінець, тобто на другий рядок */
+  .site-header nav {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;     /* меню можна прогортати пальцем вбік */
+  }
+
+  .who-grid {
+    grid-template-columns: 1fr;   /* одна колонка замість двох */
+  }
+
+  figure {
+    max-width: 280px;
+    margin: 0 auto;
+  }
+
+  .q-block,
+  .brick {
+    width: 44px;
+    height: 44px;
+  }
+
+  .q-block {
+    font-size: 1.1rem;
+  }
+}
+
+/* Деяким людям від анімацій паморочиться в голові —
+   вони вмикають у системі «зменшити рух». Поважаємо це! */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
